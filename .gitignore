@@ -1,0 +1,35 @@
+# Ignore compiled binaries inside day folders
+day*/**
+
+# But keep source files
+!day*/*.c
+!day*/*.h
+
+# Keep folders
+!day*/
+
+# Ignore object files
+*.o
+
+# Ignore dependency files
+*.d
+
+# Ignore common build artifacts
+*.out
+*.exe
+*.log
+
+# macOS junk
+.DS_Store
+
+# Editor swap files
+*.swp
+*.swo
+
+# VSCode settings
+.vscode/
+
+# CLion / JetBrains
+.idea/
+cmake-build-*/
+
