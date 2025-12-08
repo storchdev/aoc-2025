@@ -1,34 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-void beamsim(char *grid, int rows, int cols, int initr, int initc, long long w,
-             long long *ans) {
-  for (int r = initr; r < rows; r++) {
-    if (grid[r * cols + initc] == '^') {
-      // for (int i = 0; i < *vlen; i++) {
-      //   if (r * cols + initc == (*v)[i]) {
-      //     return;
-      //   }
-      // }
-      //
-      // (*v)[*vlen] = r * cols + initc;
-      // (*vlen)++;
-
-      // printf("Split at (%d,%d)\n", r, initc);
-      // (*ans)++;
-      if (initc - 1 >= 0) {
-        beamsim(grid, rows, cols, r, initc - 1, w * 2, ans);
-      }
-      if (initc + 1 < cols) {
-        beamsim(grid, rows, cols, r, initc + 1, w * 2, ans);
-      }
-      return;
-    }
-  }
-
-  (*ans) += w;
-}
 
 typedef struct {
   int r;

@@ -1,6 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 void beamsim(char *grid, int rows, int cols, int initr, int initc, int **v,
              int *vlen, int *ans) {
