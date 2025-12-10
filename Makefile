@@ -10,7 +10,7 @@ LDFLAGS = -lm -lgmp -lglib-2.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/inclu
 COMMON = common.c
 
 # All C files directly under day directories, e.g. day0/main.c, day1/part1.c
-DAY_SRCS := $(wildcard day*/*.c)
+DAY_SRCS := $(wildcard day*/part*.c)
 
 # Turn dayN/foo.c -> dayN/foo.out
 DAY_BINS := $(DAY_SRCS:.c=.out)

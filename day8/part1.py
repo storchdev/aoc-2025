@@ -31,29 +31,26 @@ vis = set()
 dists = []
 n = len(lns)
 for i in range(n - 1):
-    for j in range(i, n):
+    for j in range(i + 1, n):
         dists.append((lns[i], lns[j]))
 
-dists.sort(reverse=False, key=lambda t: t[0].dist(t[1]))
+dists.sort(key=lambda t: t[0].dist(t[1]))
 
 # di = 0
 i = 0
-while i < 10:
+while i < 1000:
     v1, v2 = dists[i]
-    # if (v1,v2) in vis:
-    #     continue
-    # vis.add((v1,v2))
 
     i1 = 0
     i2 = 0
-    for i, c in enumerate(cs):
+    for j, c in enumerate(cs):
         if v1 in c:
-            i1 = i
+            i1 = j
         if v2 in c:
-            i2 = i
+            i2 = j
 
     if i1 == i2:
-        # i += 1
+        i += 1
         continue
 
     cs[i1] |= cs[i2]
@@ -63,6 +60,6 @@ while i < 10:
 
 cs.sort(key=lambda c: len(c), reverse=True)
 
-print(cs)
-
+# print(len(cs), cs)
+print("len:", len(cs))
 print(len(cs[0]) * len(cs[1]) * len(cs[2]))
