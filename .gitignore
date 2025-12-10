@@ -4,6 +4,7 @@ day*/**
 # But keep source files
 !day*/*.c
 !day*/*.h
+!day*/*.py
 
 # Keep folders
 !day*/
