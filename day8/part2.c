@@ -2,20 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(int argc, char **argv) {
-  int steps = 10;
-  if (argc > 1) {
-    char *eptr = NULL;
-    steps = strtol(argv[1], &eptr, 10);
-
-    if (eptr == argv[1]) {
-      printf("Invalid # of steps\n");
-      exit(1);
-    }
-  }
-
-  printf("Steps: %d\n\n", steps);
-
+int main() {
   Circuits circuits = newcircuits();
   Box *boxes = malloc(10000 * sizeof(Box));
   int blen = 0;
@@ -35,12 +22,20 @@ int main(int argc, char **argv) {
 
   makeconns(boxes, blen, conns, &conlen);
 
-  for (int a = 0; a < steps; a++) {
+  int a = 0;
+  Box *last1;
+  Box *last2;
+
+  while (circuits.len > 1) {
     Conn *conn = conns + a;
+    a++;
 
     // these boxes do not contain ci info
     Box *b1 = boxes + conn->a;
     Box *b2 = boxes + conn->b;
+
+    last1 = b1;
+    last2 = b2;
 
     int ci1 = -1;
     int ci2 = -1;
@@ -70,19 +65,14 @@ int main(int argc, char **argv) {
     // printcircuits(&circuits);
   }
 
-  qsort(circuits.circuits, circuits.len, sizeof(Circuit), compcir);
-
-  int x0 = circuits.circuits[0].len;
-  int x1 = circuits.circuits[1].len;
-  int x2 = circuits.circuits[2].len;
-
-  // printcircuits(&circuits);
   delcircuits(&circuits);
+
+  long long ans = (long long)last1->x * (long long)last2->x;
 
   free(boxes);
   free(conns);
 
-  printf("Ans: %d\n", x0 * x1 * x2);
+  printf("Ans: %lld\n", ans);
 
   return 0;
 }
