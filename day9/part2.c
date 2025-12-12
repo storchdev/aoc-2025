@@ -54,9 +54,10 @@ int isinside(Coord *coord, Seg *segs, int seglen) {
   return rctr % 2;
 }
 
-int coordseq(Coord *c1, Coord *c2) { return c1->a == c2->a && c1->b == c2->b; }
+// int coordsEq(Coord *c1, Coord *c2) { return c1->a == c2->a && c1->b == c2->b;
+// }
 
-int isvert(Seg *s) { return s->c1->a == s->c2->a; }
+int isVert(Seg *s) { return s->c1->a == s->c2->a; }
 
 int arraymin(int *arr, int len) {
   int min = INT32_MAX;
@@ -81,7 +82,7 @@ int arraymax(int *arr, int len) {
 int min(int a, int b) { return a < b ? a : b; }
 int max(int a, int b) { return a > b ? a : b; }
 
-int doesseginteresect(Seg *s1, Seg *s2) {
+int doesSegIntersect(Seg *s1, Seg *s2) {
   int s1x1 = s1->c1->a;
   int s1y1 = s1->c1->b;
   int s1x2 = s1->c2->a;
@@ -91,10 +92,10 @@ int doesseginteresect(Seg *s1, Seg *s2) {
   int s2x2 = s2->c2->a;
   int s2y2 = s2->c2->b;
 
-  if (isvert(s1) == isvert(s2))
+  if (isVert(s1) == isVert(s2))
     return 0;
 
-  if (isvert(s1)) {
+  if (isVert(s1)) {
     int miny = min(s1y1, s1y2);
     int maxy = max(s1y1, s1y2);
 
@@ -118,7 +119,7 @@ int doesseginteresect(Seg *s1, Seg *s2) {
   return 0;
 }
 
-int doesintersect(Coord *pcnr1, Coord *pcnr2, Seg *polygon, int len) {
+int doesIntersect(Coord *pcnr1, Coord *pcnr2, Seg *polygon, int len) {
   Coord cnr3 = {pcnr1->a, pcnr2->b};
   Coord cnr4 = {pcnr2->a, pcnr1->b};
 
@@ -128,7 +129,7 @@ int doesintersect(Coord *pcnr1, Coord *pcnr2, Seg *polygon, int len) {
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < len; j++) {
       // if (doesseginteresect(sides + i, polygon + j)) {
-      if (doesseginteresect(sides + i, polygon + j)) {
+      if (doesSegIntersect(sides + i, polygon + j)) {
         return 1;
       }
     }
@@ -149,7 +150,7 @@ int main() {
     len++;
     if (len == 1000) {
       printf("len is 1000!\n");
-      return -1;
+      exit(1);
     }
   }
 
@@ -196,7 +197,7 @@ int main() {
       if (!allinside)
         continue;
 
-      if (doesintersect(coords + i, coords + j, segs, seglen)) {
+      if (doesIntersect(coords + i, coords + j, segs, seglen)) {
         continue;
       }
 
