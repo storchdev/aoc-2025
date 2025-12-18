@@ -78,7 +78,7 @@ void searchmachine(Machine *m, int *ans) {
   if (minc == 1000) {
     printf("Didn't find anything for machine\n");
   } else {
-    printf("Added %d for machine\n", minc);
+    // printf("Added %d for machine\n", minc);
     *ans += minc;
   }
 }
@@ -159,7 +159,7 @@ int main() {
   int ans = 0;
 
   for (int i = 0; i < mlen; i++) {
-    printmachine(machines + i);
+    // printmachine(machines + i);
     searchmachine(machines + i, &ans);
   }
 

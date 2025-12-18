@@ -4,67 +4,73 @@ import re
 sys.setrecursionlimit(1000000)
 
 
-# /
+# inspired by https://www.reddit.com/r/adventofcode/comments/1pk87hl/2025_day_10_part_2_bifurcate_your_way_to_victory/
 
 
-def allsubsets(rows: list[list[int]], target: tuple[int], cache):
-    if v := cache.get(target):
-        return v
+def list2int(v: list[int]) -> int:
+    rv = 0
+    for i in v:
+        rv = (rv << 1) | (i & 1)
 
-    target_bin = list(map(lambda n: int(n % 2), target))
+    return rv
 
-    allsets = []
 
-    for mask in range(1 << len(rows)):
-        mut = [0] * len(target)
-        this_set = set()
+def allsubsets(rows: list[list[int]], target: list[int], cache) -> list[int]:
+    target_bin = list2int(target)
 
+    if len(cache) > 0:
+        if v := cache.get(target_bin):
+            return v
+
+        return []
+
+    rows_bin = [list2int(x) for x in rows]
+
+    for mask in range(0, 1 << len(rows)):
+        mut = 0
         for i in range(len(rows)):
             if (1 << i) & mask:
-                mut = [a ^ b for a, b in zip(mut, rows[i])]
-                this_set.add(i)
+                mut = mut ^ rows_bin[i]
 
-        if mut == target_bin:
-            allsets.append(this_set)
+        if mut not in cache:
+            cache[mut] = [mask]
+        else:
+            cache[mut].append(mask)
 
-    cache[target] = allsets
-    return allsets
+    return cache.get(target_bin, [])
 
 
 def min_presses(rows, target, cache, cache2):
-    if target == [0] * len(target):
-        # print(f"f({target}) = {0}")
+    if sum(target) == 0:
         return 0
 
     k = tuple(target)
     if v := cache.get(k):
-        # print(f"f({target}) = {v}")
         return v
 
-    minsets = allsubsets(rows, k, cache2)
+    allsets = allsubsets(rows, target, cache2)
 
     minv = float("inf")
-    for minset in minsets:
+    for minset in allsets:
         newtarget = target.copy()
 
-        for i in minset:
-            newtarget = [a - b for a, b in zip(newtarget, rows[i])]
+        c = 0
+        for i in range(len(rows)):
+            if (1 << i) & minset:
+                newtarget = [a - b for a, b in zip(newtarget, rows[i])]
+                c += 1
 
         if not all(x >= 0 for x in newtarget):
             continue
 
-        # print(f"target after subtracting: {newtarget}")
-
-        assert all(a % 2 == 0 for a in newtarget)
         newtarget = [x // 2 for x in newtarget]
 
-        v = len(minset) + 2 * min_presses(rows, newtarget, cache, cache2)
+        v = c + 2 * min_presses(rows, newtarget, cache, cache2)
 
         if v < minv:
             minv = v
 
     cache[k] = minv
-    # print(f"f({target}) = {minv}")
     return minv
 
 
@@ -77,14 +83,9 @@ for ln in sys.stdin.read().split("\n"):
         continue
     counter += 1
 
-    print("-" * 50)
-    print("Machine", counter)
     matches1 = re.findall(r"(\((?:\d|,)+\)\s)", ln)
     matches2 = re.findall(r"\{.+\}", ln)[0].strip("{}")
     matches1 = [str(m).strip("() ") for m in matches1]
-
-    # print(matches1)
-    # print(matches2)
 
     target = [int(x) for x in matches2.split(",")]
 
@@ -95,12 +96,12 @@ for ln in sys.stdin.read().split("\n"):
             row[int(i)] = 1
         rows.append(row)
 
-    # subset = allsubsets(rows, target)
-    # print(subset)
     cache = {}
     cache2 = {}
     ans = min_presses(rows, target, cache, cache2)
-    print(ans)
+    # print("-" * 50)
+    # print("Machine", counter)
+    # print(ans)
     total += ans
 
 
