@@ -5,7 +5,7 @@
 
 typedef struct {
   int n;
-  bool *target;
+  int *target;
   int schemlen;
   bool **schems;
 } Machine;
@@ -41,13 +41,13 @@ void printmachine(Machine *m) {
   printf("]>\n");
 }
 
-void arrxor(bool *dst, bool *a1, bool *a2, int len) {
-  for (int i = 0; i < len; i++) {
-    dst[i] = a1[i] ^ a2[i];
-  }
-}
+// void arrxor(bool *dst, bool *a1, bool *a2, int len) {
+//   for (int i = 0; i < len; i++) {
+//     dst[i] = a1[i] ^ a2[i];
+//   }
+// }
 
-int arrcmp(bool *a1, bool *a2, int len) {
+int arrcmp(int *a1, int *a2, int len) {
   for (int i = 0; i < len; i++) {
     if (a1[i] != a2[i])
       return 1;
@@ -56,32 +56,7 @@ int arrcmp(bool *a1, bool *a2, int len) {
   return 0;
 }
 
-void searchmachine(Machine *m, int *ans) {
-  int minc = 1000;
-  for (int mask = 1; mask < 1 << m->schemlen; mask++) {
-    bool testarr[100] = {0};
-
-    int c = 0;
-    for (int i = 0; i < m->schemlen; i++) {
-      if ((mask & (1 << i)) != 0) {
-        arrxor(testarr, testarr, m->schems[i], m->n);
-        c++;
-      }
-    }
-
-    if (arrcmp(testarr, m->target, m->n) == 0) {
-      if (c < minc)
-        minc = c;
-    }
-  }
-
-  if (minc == 1000) {
-    printf("Didn't find anything for machine\n");
-  } else {
-    printf("Added %d for machine\n", minc);
-    *ans += minc;
-  }
-}
+void logic(Machine *m, int *ans) {}
 
 int main() {
 
@@ -96,30 +71,29 @@ int main() {
     if (x == EOF)
       break;
 
-    char targetstr[20];
+    char tempstr[20];
     int i = 0;
     for (;;) {
       x = getchar();
       if (x == ']')
         break;
-      targetstr[i] = x;
+      tempstr[i] = x;
       i++;
     }
-    targetstr[i] = '\0';
-    int n = strlen(targetstr);
+    tempstr[i] = '\0';
+    int n = strlen(tempstr);
 
-    bool *target = malloc(sizeof(bool) * (n + 1));
-    for (int i = 0; i < n; i++) {
-      if (targetstr[i] == '.') {
-        target[i] = false;
-      } else {
-        target[i] = true;
-      }
-    }
+    // bool *target = malloc(sizeof(bool) * n);
+    // for (int i = 0; i < n; i++) {
+    //   if (targetstr[i] == '.') {
+    //     target[i] = false;
+    //   } else {
+    //     target[i] = true;
+    //   }
+    // }
 
     int schemlen = 0;
     bool **schems = malloc(20 * sizeof(bool *));
-    // bool *schem;
     int d = 0;
 
     for (;;) {
@@ -148,6 +122,36 @@ int main() {
       }
     }
 
+    // everything after {
+    int *target = malloc(sizeof(int) * n);
+
+    d = 0;
+    i = 0;
+    for (;;) {
+      x = getchar();
+      if (x == '}') {
+        target[i] = d;
+        i++;
+        break;
+      }
+      if (x == ',') {
+        target[i] = d;
+        i++;
+        d = 0;
+      } else if ('0' <= x && x <= '9') {
+        d = 10 * d + (x - '0');
+      }
+    }
+
+    // printf("Target: [");
+    // for (int i = 0; i < n; i++) {
+    //   printf("%d", target[i]);
+    //   if (i != n - 1) {
+    //     printf(",");
+    //   }
+    // }
+    // printf("]\n");
+
     machines[mlen] = (Machine){n, target, schemlen, schems};
     mlen++;
 
@@ -160,7 +164,7 @@ int main() {
 
   for (int i = 0; i < mlen; i++) {
     printmachine(machines + i);
-    searchmachine(machines + i, &ans);
+    logic(machines + i, &ans);
   }
 
   for (int i = 0; i < mlen; i++) {
